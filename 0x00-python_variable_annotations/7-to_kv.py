@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env python3
 """
 This module contains type-annotated function to_kv that takes a string k
 and an int OR float v as arguments and returns a tuple.
