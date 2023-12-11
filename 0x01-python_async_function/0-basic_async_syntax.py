@@ -9,7 +9,7 @@ import asyncio
 import random
 
 
-async def wait_random(max_delay=10):
+async def wait_random(max_delay:int = 10) -> float:
     """Performs a non-blocking delay for a randomly generated wait period"""
     delay = random.random() * max_delay
     await asyncio.sleep(delay)
