@@ -43,6 +43,44 @@ class TestGithubOrgClient(unittest.TestCase):
             self.assertEqual(github_client._public_repos_url,
                              payload['repos_url'])
 
+    # TODO: implement this - task 6
+    # @patch('utils.requests.get')
+    # def test_public_repos(self, mock_get):
+    #     """
+    #     unit-test GithubOrgClient.public_repos method
+    #     """
+    #     github_client = GithubOrgClient('google')
+    #     payload1 = {
+    #         'repos_url': 'https://api.github.com/orgs/google/repos'
+    #     }
+    #     payload = [
+    #         {'name': 'repo1'}
+    #         ]
+    #     mock_get.return_value.json.return_value = payload
+
+    #     with patch('client.GithubOrgClient._public_repos_url',
+    #                new_callable=PropertyMock) as mock__public_repos_url:
+    #         mock__public_repos_url.return_value = payload1['repos_url']
+
+    #         self.assertEqual(github_client._public_repos_url,
+    #                          payload1['repos_url'])
+    #         mock__public_repos_url.assert_called_once()
+
+    #     repos = github_client.public_repos()
+    #     self.assertEqual(repos, [])
+    #     mock_get.assert_called_once()
+
+    @parameterized.expand([
+        ({"license": {"key": "my_license"}}, "my_license", True),
+        ({"license": {"key": "other_license"}}, "my_license", False)
+    ])
+    def test_has_license(self, repo, license_key, expected):
+        """
+        unit-test GithubOrgClient.has_license method
+        """
+        self.assertEqual(GithubOrgClient.has_license(repo, license_key),
+                         expected)
+
 
 if __name__ == "__main__":
     unittest.main()
