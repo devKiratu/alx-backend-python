@@ -5,6 +5,7 @@ Defines unit tests for the client module
 import unittest
 from unittest.mock import Mock, patch, PropertyMock, MagicMock
 from parameterized import parameterized, parameterized_class
+from requests import HTTPError
 from client import GithubOrgClient
 from fixtures import TEST_PAYLOAD
 org_payload, repos_payload, expected_repos, apache2_repos = TEST_PAYLOAD[0]
@@ -110,6 +111,7 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
         }
         if url in data:
             return MagicMock(json=lambda: data[url])
+        return HTTPError
 
     def test_public_repos(self):
         """
