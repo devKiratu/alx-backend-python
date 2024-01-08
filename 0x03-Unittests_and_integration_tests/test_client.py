@@ -103,6 +103,9 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
 
     @staticmethod
     def get_payload(url):
+        """
+        returns mock data
+        """
         data = {
             'https://api.github.com/orgs/google': org_payload,
             'https://api.github.com/orgs/google/repos': repos_payload,
@@ -111,10 +114,21 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
             return MagicMock(json=lambda: data[url])
 
     def test_public_repos(self):
+        """
+        test the GithubOrgClient.public_repos method in an integration test
+        """
         github_client = GithubOrgClient('google')
 
         result = github_client.public_repos()
         self.assertEqual(result, expected_repos)
+
+    def test_public_repos_with_license(self):
+        """
+        test the public_repos with the argument license="apache-2.0"
+        """
+        github_client = GithubOrgClient('google')
+        result = github_client.public_repos(license="apache-2.0")
+        self.assertEqual(result, apache2_repos)
 
 
 if __name__ == "__main__":
