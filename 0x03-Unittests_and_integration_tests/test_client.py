@@ -95,19 +95,22 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
     def setUpClass(cls):
         cls.get_patcher = patch('requests.get')
         cls.mock_get = cls.get_patcher.start()
-        cls.mock_get.side_effect = cls.mock_requests_get
+        cls.mock_get.side_effect = cls.get_payload
 
     @classmethod
     def tearDownClass(cls):
         cls.get_patcher.stop()
 
     @staticmethod
-    def mock_requests_get():
-        return MagicMock(json=lambda: expected_repos)
+    def get_payload(url):
+        data = {
+            'https://api.github.com/orgs/google': org_payload,
+            'https://api.github.com/orgs/google/repos': repos_payload,
+        }
+        return MagicMock(json=lambda: data[url])
 
     def test_public_repos(self):
         github_client = GithubOrgClient('google')
-        github_client.public_repos = MagicMock(return_value=expected_repos)
 
         result = github_client.public_repos()
         self.assertEqual(result, expected_repos)
