@@ -107,7 +107,8 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
             'https://api.github.com/orgs/google': org_payload,
             'https://api.github.com/orgs/google/repos': repos_payload,
         }
-        return MagicMock(json=lambda: data[url])
+        if url in data:
+            return MagicMock(json=lambda: data[url])
 
     def test_public_repos(self):
         github_client = GithubOrgClient('google')
