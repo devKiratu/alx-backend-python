@@ -3,9 +3,11 @@
 Defines unit tests for the client module
 """
 import unittest
-from unittest.mock import Mock, patch, PropertyMock
-from parameterized import parameterized
+from unittest.mock import Mock, patch, PropertyMock, MagicMock
+from parameterized import parameterized, parameterized_class
 from client import GithubOrgClient
+from fixtures import TEST_PAYLOAD
+org_payload, repos_payload, expected_repos, apache2_repos = TEST_PAYLOAD[0]
 
 
 class TestGithubOrgClient(unittest.TestCase):
@@ -80,6 +82,35 @@ class TestGithubOrgClient(unittest.TestCase):
         """
         self.assertEqual(GithubOrgClient.has_license(repo, license_key),
                          expected)
+
+
+@parameterized_class(('org', 'repos', 'expected_repos', 'apache2_repos'), [
+    (org_payload, repos_payload, expected_repos, apache2_repos)
+])
+class TestIntegrationGithubOrgClient(unittest.TestCase):
+    """
+    test the GithubOrgClient.public_repos method in an integration test
+    """
+    @classmethod
+    def setUpClass(cls):
+        cls.get_patcher = patch('requests.get')
+        cls.mock_get = cls.get_patcher.start()
+        cls.mock_get.side_effect = cls.mock_requests_get
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.get_patcher.stop()
+
+    @staticmethod
+    def mock_requests_get():
+        return MagicMock(json=lambda: expected_repos)
+
+    def test_public_repos(self):
+        github_client = GithubOrgClient('google')
+        github_client.public_repos = MagicMock(return_value=expected_repos)
+
+        result = github_client.public_repos()
+        self.assertEqual(result, expected_repos)
 
 
 if __name__ == "__main__":
