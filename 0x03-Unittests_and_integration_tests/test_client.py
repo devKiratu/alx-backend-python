@@ -92,12 +92,18 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
     test the GithubOrgClient.public_repos method in an integration test
     """
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
+        """
+        perfoms set up for test class
+        """
         cls.get_patcher = patch('requests.get', side_effect=cls.get_payload)
         cls.get_patcher.start()
 
     @classmethod
-    def tearDownClass(cls):
+    def tearDownClass(cls) -> None:
+        """
+        clears the test environment for the class
+        """
         cls.get_patcher.stop()
 
     @staticmethod
@@ -109,9 +115,7 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
             'https://api.github.com/orgs/google': org_payload,
             'https://api.github.com/orgs/google/repos': repos_payload,
         }
-        if url in data:
-            return MagicMock(json=lambda: data[url])
-        return HTTPError
+        return Mock(**{'json.return_value': data[url]})
 
     def test_public_repos(self):
         """
